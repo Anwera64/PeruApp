@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PeruApp</string>
+    <string name="lorem_ipsum_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget feugiat ipsum,
+        et porta lectus. Aliquam et sagittis erat. Suspendisse id tristique elit. Interdum et malesuada fames ac ante
+        ipsum primis in faucibus. Proin tempus odio eros, non tempus sem sagittis quis. Ut ut auctor quam. Praesent
+        vestibulum, lectus eu tincidunt aliquet, eros lorem efficitur dolor, sed suscipit magna mi eu odio. Pellentesque
+        euismod ultricies dolor, sed dapibus erat consequat et. Fusce ut lacus eget lectus sagittis egestas.
+    </string>
+</resources>
