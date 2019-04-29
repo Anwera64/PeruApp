@@ -10,5 +10,6 @@ class Task (
     var title: String,
     var detail: String,
     val creationDate: Date,
+    val expirationDate: Date,
     val notificationDate: Date
 ) : RealmObject()
