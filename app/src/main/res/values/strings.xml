@@ -6,4 +6,27 @@
         vestibulum, lectus eu tincidunt aliquet, eros lorem efficitur dolor, sed suscipit magna mi eu odio. Pellentesque
         euismod ultricies dolor, sed dapibus erat consequat et. Fusce ut lacus eget lectus sagittis egestas.
     </string>
+    <string name="obligatory_error">Este campo es obligatorio</string>
+    <string name="add_new">Add new</string>
+    <string name="date_error_msg">Tienes que elegir una fecha para tu tarea. Por favor, elije una en el calendario
+    </string>
+    <string name="cancel_warning">No se guardaran los cambios!</string>
+    <string name="_continue">Continuar</string>
+    <string name="_cancel">Cancelar</string>
+    <string name="_ok">OK</string>
+
+    <string-array name="date_array">
+        <item>La misma fecha</item>
+        <item>Un dia antes</item>
+        <item>Dos dias antes</item>
+        <item>Una semana antes</item>
+        <item>Elegir una fecha</item>
+    </string-array>
+
+    <string-array name="time_array">
+        <item>Mañana</item>
+        <item>Tarde</item>
+        <item>Noche</item>
+        <item>Elegir una hora</item>
+    </string-array>
 </resources>

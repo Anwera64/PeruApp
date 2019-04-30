@@ -1,4 +1,4 @@
-package com.anwera64.peruapp.Presentation.Presenter
+package com.anwera64.peruapp.presentation.presenter
 
 import com.anwera64.peruapp.data.DataStorageManager
 import com.anwera64.peruapp.data.model.Task

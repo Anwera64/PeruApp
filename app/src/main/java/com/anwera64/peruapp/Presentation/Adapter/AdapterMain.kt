@@ -1,4 +1,4 @@
-package com.anwera64.peruapp.Presentation.Adapter
+package com.anwera64.peruapp.presentation.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.text.format.DateFormat
@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.anwera64.peruapp.R
 import com.anwera64.peruapp.data.model.Task
-import io.realm.Realm
 import kotlinx.android.synthetic.main.item_task.view.*
 
 class AdapterMain(var tasks: ArrayList<Task>): RecyclerView.Adapter<AdapterMain.ViewHolder>() {
