@@ -4,21 +4,18 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
-import com.anwera64.peruapp.presentation.presenter.NewTaskDelegate
-import com.anwera64.peruapp.presentation.presenter.NewTaskPresenter
+import androidx.appcompat.app.AppCompatActivity
 import com.anwera64.peruapp.R
 import com.anwera64.peruapp.data.model.Task
 import com.anwera64.peruapp.extensions.checkEditText
 import kotlinx.android.synthetic.main.activity_new_task.*
 import java.util.*
 
-class NewTaskActivity : AppCompatActivity(), NewTaskDelegate {
+class NewTaskActivity : AppCompatActivity() {
 
-    private val mPresenter = NewTaskPresenter(this)
     private var dueDate: Date? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +39,7 @@ class NewTaskActivity : AppCompatActivity(), NewTaskDelegate {
         }
 
         swRecordatorio.setOnCheckedChangeListener { _, isChecked ->
-            when(isChecked) {
+            when (isChecked) {
                 false -> {
                     spNotificationDate.visibility = View.GONE
                 }
@@ -55,9 +52,9 @@ class NewTaskActivity : AppCompatActivity(), NewTaskDelegate {
         btnAdd.setOnClickListener { checkForCompletion() }
     }
 
-    override fun onTaskCreated(id: String) {
+    private fun onTaskCreated(task: Task) {
         val intent = Intent()
-        intent.putExtra("id", id)
+        intent.putExtra("task", task)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
@@ -79,14 +76,15 @@ class NewTaskActivity : AppCompatActivity(), NewTaskDelegate {
 
         }
 
-        val task = Task(UUID.randomUUID().toString(), title, detail, creationDate, dueDate!!, notificationDate)
-        mPresenter.saveTask(task)
+        val task =
+            Task(UUID.randomUUID().toString(), title, detail, creationDate.time, dueDate!!.time, notificationDate?.time)
+        onTaskCreated(task)
     }
 
     private fun dateAlert() {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.date_error_msg))
-            .setNeutralButton(getString(R.string._ok)) { dialog, _ ->  dialog.dismiss()}
+            .setNeutralButton(getString(R.string._ok)) { dialog, _ -> dialog.dismiss() }
     }
 
 

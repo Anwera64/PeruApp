@@ -1,6 +1,6 @@
 package com.anwera64.peruapp.extensions
 
-import android.support.design.widget.TextInputLayout
+import com.google.android.material.textfield.TextInputLayout
 
 fun TextInputLayout.checkEditText(message: String): Boolean {
     if (editText?.text.isNullOrEmpty()) {
