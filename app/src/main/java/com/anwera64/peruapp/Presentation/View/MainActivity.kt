@@ -1,11 +1,15 @@
 package com.anwera64.peruapp.presentation.view
 
 import android.app.Activity
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anwera64.peruapp.R
@@ -13,6 +17,7 @@ import com.anwera64.peruapp.data.model.Task
 import com.anwera64.peruapp.presentation.adapter.AdapterMain
 import com.anwera64.peruapp.presentation.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.Normalizer
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,6 +54,41 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_plus, menu)
+
+        val manager = this.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val search = menu?.findItem(R.id.action_search)?.actionView as SearchView
+        search.setSearchableInfo(manager.getSearchableInfo(this.componentName))
+
+        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    filterTasks(query)
+                }
+                search.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    filterTasks(newText)
+                }
+                return true
+            }
+
+        })
+
+        search.setOnCloseListener {
+            filterTasks()
+            false
+        }
+
+        search.setOnQueryTextFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                val mgr = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                mgr.hideSoftInputFromWindow(v.windowToken, 0)
+            }
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -62,6 +102,22 @@ class MainActivity : AppCompatActivity() {
     private fun newTask() {
         val intent = Intent(this, NewTaskActivity::class.java)
         startActivityForResult(intent, NEW_TASK)
+    }
+
+    private fun filterTasks(query: String) {
+        val filteredTasks = viewModel.allTasks.value
+        val queryNormalized = Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD)
+
+        filteredTasks?.let {
+            adapter.tasks = filteredTasks.filter { task ->
+                val titleNormalized = Normalizer.normalize(task.title.toLowerCase(), Normalizer.Form.NFD)
+                titleNormalized.contains(queryNormalized)
+            }
+        }
+    }
+
+    private fun filterTasks() {
+        filterTasks("")
     }
 
 }

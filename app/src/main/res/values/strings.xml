@@ -14,6 +14,7 @@
     <string name="_continue">Continuar</string>
     <string name="_cancel">Cancelar</string>
     <string name="_ok">OK</string>
+    <string name="search_tasks">Buscar tareas</string>
 
     <string-array name="date_array">
         <item>La misma fecha</item>

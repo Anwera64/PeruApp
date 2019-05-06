@@ -3,7 +3,6 @@ package com.anwera64.peruapp.data
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import com.anwera64.peruapp.data.model.Task
 
 class TaskRepository private constructor(val database: AppDatabase) {
@@ -24,10 +23,12 @@ class TaskRepository private constructor(val database: AppDatabase) {
     }
 
     init {
-        mTasks.addSource(database.taskDAO().getAll()) { taskEntities ->
-            if (database.mIsDatabaseCreated.value != null) {
-                mTasks.postValue(taskEntities)
-            }
+        mTasks.addSource(database.taskDAO().getAll()) { taskEntities -> postTasks(taskEntities) }
+    }
+
+    private fun postTasks(taskEntities: List<Task>) {
+        if (database.mIsDatabaseCreated.value != null) {
+            mTasks.postValue(taskEntities)
         }
     }
 
@@ -36,12 +37,7 @@ class TaskRepository private constructor(val database: AppDatabase) {
         database.taskDAO().insertTask(task)
     }
 
-    fun getTask(id: String) : Task? {
+    fun getTask(id: String): Task? {
         return database.taskDAO().getTask(id)
     }
-
-    fun filterTasks(query: String) {
-        //TODO
-    }
-
 }
