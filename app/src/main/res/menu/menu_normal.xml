@@ -7,6 +7,12 @@
             app:actionViewClass="androidx.appcompat.widget.SearchView"
             app:showAsAction="always"/>
 
+    <item android:title="@string/delete"
+          android:id="@+id/delete"
+          android:visible="false"
+          android:icon="@drawable/ic_delete"
+          app:showAsAction="ifRoom"/>
+
     <item
             android:id="@+id/addNew"
             android:title="@string/add_new"

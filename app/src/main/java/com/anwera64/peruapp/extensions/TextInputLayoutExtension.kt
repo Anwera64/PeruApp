@@ -10,3 +10,4 @@ fun TextInputLayout.checkEditText(message: String): Boolean {
     }
     return false
 }
+

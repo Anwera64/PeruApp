@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.anwera64.peruapp.data.model.Task
 
-class TaskRepository private constructor(val database: AppDatabase) {
+class TaskRepository private constructor(private val database: AppDatabase) {
 
     var mTasks: MediatorLiveData<List<Task>> = MediatorLiveData()
 
@@ -35,6 +35,11 @@ class TaskRepository private constructor(val database: AppDatabase) {
     @WorkerThread
     suspend fun insertTask(task: Task) {
         database.taskDAO().insertTask(task)
+    }
+
+    @WorkerThread
+    suspend fun deleteTask(task: Task) {
+        database.taskDAO().deleteTask(task)
     }
 
     fun getTask(id: String): Task? {

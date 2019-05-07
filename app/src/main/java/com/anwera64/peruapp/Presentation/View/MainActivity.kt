@@ -10,6 +10,8 @@ import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat.invalidateOptionsMenu
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anwera64.peruapp.R
@@ -19,14 +21,17 @@ import com.anwera64.peruapp.presentation.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.Normalizer
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AdapterMain.MainAdapterDelegate {
 
     companion object {
         private const val NEW_TASK = 0
     }
 
-    private val adapter = AdapterMain()
+    private enum class MenuType { Normal, OneSelected }
+
+    private val adapter = AdapterMain(this)
     private lateinit var viewModel: MainViewModel
+    private var menuType = MenuType.Normal
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +58,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_plus, menu)
+        menuInflater.inflate(R.menu.menu_normal, menu)
+        menu?.let { createNormalMenu(menu) }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            when (menuType) {
+                MenuType.Normal -> {
+                    menu.findItem(R.id.delete)?.isVisible = false
+                    menu.findItem(R.id.action_search)?.isVisible = true
+                    menu.findItem(R.id.addNew)?.isVisible = true
+                }
+                MenuType.OneSelected -> {
+                    menu.findItem(R.id.delete)?.isVisible = true
+                    menu.findItem(R.id.action_search)?.isVisible = false
+                    menu.findItem(R.id.addNew)?.isVisible = false
+                }
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun createNormalMenu(menu: Menu) {
 
         val manager = this.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val search = menu?.findItem(R.id.action_search)?.actionView as SearchView
+        val search = menu.findItem(R.id.action_search)?.actionView as SearchView
         search.setSearchableInfo(manager.getSearchableInfo(this.componentName))
 
         search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -74,7 +102,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 return true
             }
-
         })
 
         search.setOnCloseListener {
@@ -88,15 +115,21 @@ class MainActivity : AppCompatActivity() {
                 mgr.hideSoftInputFromWindow(v.windowToken, 0)
             }
         }
-
-        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.addNew -> newTask()
+            R.id.delete -> deleteTasks()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun deleteTasks() {
+        adapter.selectedTasks.values.forEach { v -> viewModel.deleteTask(v) }
+        adapter.selectedTasks.clear()
+        menuType = MenuType.Normal
+        invalidateOptionsMenu()
     }
 
     private fun newTask() {
@@ -120,4 +153,11 @@ class MainActivity : AppCompatActivity() {
         filterTasks("")
     }
 
+    override fun onItemSelected() {
+        menuType = MenuType.OneSelected
+        invalidateOptionsMenu()
+    }
+
 }
+
+

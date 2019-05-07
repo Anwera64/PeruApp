@@ -20,7 +20,7 @@
             tools:text="@string/lorem_ipsum_long"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:maxLines="4"
+            android:singleLine="true"
             android:ellipsize="end"
             android:textAppearance="?android:textAppearanceMedium"
             android:id="@+id/tvDescription"
