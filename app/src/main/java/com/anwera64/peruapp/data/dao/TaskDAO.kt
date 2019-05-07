@@ -12,7 +12,7 @@ interface TaskDAO {
     @Query("SELECT * FROM task WHERE id LIKE :uid LIMIT 1 ")
     fun getTask(uid: String): Task?
 
-    @Query("SELECT * FROM task ORDER BY creation_date")
+    @Query("SELECT * FROM task ORDER BY expiration_date")
     fun getAll(): LiveData<List<Task>>
 
     @Insert

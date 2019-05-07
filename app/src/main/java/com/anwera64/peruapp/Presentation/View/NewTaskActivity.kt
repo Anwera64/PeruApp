@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
@@ -21,7 +22,7 @@ class NewTaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_task)
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         cvDueDate.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val calendar = Calendar.getInstance()
@@ -48,8 +49,11 @@ class NewTaskActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
-        btnAdd.setOnClickListener { checkForCompletion() }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_new, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun onTaskCreated(task: Task) {
@@ -101,6 +105,7 @@ class NewTaskActivity : AppCompatActivity() {
                     .setNegativeButton(getString(R.string._cancel)) { dialog, _ -> dialog.dismiss() }
                     .show()
             }
+            R.id.addNew -> checkForCompletion()
         }
 
         return super.onOptionsItemSelected(item)

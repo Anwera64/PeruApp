@@ -154,7 +154,11 @@ class MainActivity : AppCompatActivity(), AdapterMain.MainAdapterDelegate {
     }
 
     override fun onItemSelected() {
-        menuType = MenuType.OneSelected
+        if (adapter.selectedTasks.isEmpty()) {
+            menuType = MenuType.Normal
+        } else {
+            menuType = MenuType.OneSelected
+        }
         invalidateOptionsMenu()
     }
 
