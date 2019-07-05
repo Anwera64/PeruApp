@@ -40,7 +40,7 @@ class TaskRepository private constructor(private val database: AppDatabase) {
     }
 
     private fun login(email: String, password: String) {
-        serviceLogin.login()
+        serviceLogin.login(BuildConfig.Auth, email, password)
     }
 
     private fun postTasks(taskEntities: List<Task>) {
