@@ -1,4 +1,4 @@
-package com.anwera64.peruapp.data.dao
+package com.anwera64.peruapp.data.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -19,5 +19,5 @@ interface TaskDAO {
     suspend fun insertTask(task: Task)
 
     @Delete
-    fun deleteTask(task: Task)
+    suspend fun deleteTask(task: Task)
 }

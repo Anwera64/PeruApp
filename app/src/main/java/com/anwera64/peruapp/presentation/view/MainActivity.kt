@@ -10,8 +10,6 @@ import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.app.ActivityCompat.invalidateOptionsMenu
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anwera64.peruapp.R
@@ -21,7 +19,7 @@ import com.anwera64.peruapp.presentation.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.Normalizer
 
-class MainActivity : AppCompatActivity(), AdapterMain.MainAdapterDelegate {
+class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
 
     companion object {
         private const val NEW_TASK = 0
@@ -44,7 +42,6 @@ class MainActivity : AppCompatActivity(), AdapterMain.MainAdapterDelegate {
 
         rvMain.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         rvMain.adapter = adapter
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -137,7 +134,7 @@ class MainActivity : AppCompatActivity(), AdapterMain.MainAdapterDelegate {
         startActivityForResult(intent, NEW_TASK)
     }
 
-    private fun filterTasks(query: String) {
+    private fun filterTasks(query: String = "") {
         val filteredTasks = viewModel.allTasks.value
         val queryNormalized = Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD)
 
@@ -149,15 +146,11 @@ class MainActivity : AppCompatActivity(), AdapterMain.MainAdapterDelegate {
         }
     }
 
-    private fun filterTasks() {
-        filterTasks("")
-    }
-
     override fun onItemSelected() {
-        if (adapter.selectedTasks.isEmpty()) {
-            menuType = MenuType.Normal
+        menuType = if (adapter.selectedTasks.isEmpty()) {
+            MenuType.Normal
         } else {
-            menuType = MenuType.OneSelected
+            MenuType.OneSelected
         }
         invalidateOptionsMenu()
     }

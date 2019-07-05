@@ -1,4 +1,4 @@
-package com.anwera64.peruapp.data
+package com.anwera64.peruapp.data.local
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.anwera64.peruapp.data.dao.TaskDAO
+import com.anwera64.peruapp.data.local.dao.TaskDAO
 import com.anwera64.peruapp.data.model.Task
 
 @Database(entities = [Task::class], version = 1)
@@ -25,7 +25,8 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (INSTANCE == null) {
                 synchronized(this) {
-                    INSTANCE = buildDatabase(context)
+                    INSTANCE =
+                        buildDatabase(context)
                     INSTANCE!!.updateDatabaseCreated(context)
                 }
             }
@@ -34,7 +35,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): AppDatabase {
             // Create database here
-            return Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
+            return Room.databaseBuilder(context.applicationContext, AppDatabase::class.java,
+                DATABASE_NAME
+            )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)

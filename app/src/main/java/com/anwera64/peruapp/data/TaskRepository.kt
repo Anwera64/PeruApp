@@ -1,8 +1,8 @@
 package com.anwera64.peruapp.data
 
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import com.anwera64.peruapp.data.local.AppDatabase
 import com.anwera64.peruapp.data.model.Task
 
 class TaskRepository private constructor(private val database: AppDatabase) {

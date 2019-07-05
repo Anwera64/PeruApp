@@ -8,7 +8,7 @@ import com.anwera64.peruapp.R
 import com.anwera64.peruapp.data.model.Task
 import kotlinx.android.synthetic.main.item_task.view.*
 
-class AdapterMain(val view: MainAdapterDelegate) : androidx.recyclerview.widget.RecyclerView.Adapter<AdapterMain.ViewHolder>() {
+class AdapterMain(private val view: Delegate) : androidx.recyclerview.widget.RecyclerView.Adapter<AdapterMain.ViewHolder>() {
 
     var tasks: List<Task> = emptyList()
         set(value) {
@@ -70,7 +70,7 @@ class AdapterMain(val view: MainAdapterDelegate) : androidx.recyclerview.widget.
 
     }
 
-    interface MainAdapterDelegate {
+    interface Delegate {
         fun onItemSelected()
     }
 }
