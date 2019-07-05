@@ -2,8 +2,13 @@ package com.anwera64.peruapp.data
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.MediatorLiveData
+import com.anwera64.peruapp.BuildConfig
 import com.anwera64.peruapp.data.local.AppDatabase
 import com.anwera64.peruapp.data.model.Task
+import com.anwera64.peruapp.data.remote.ServiceLogin
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 class TaskRepository private constructor(private val database: AppDatabase) {
 
@@ -12,6 +17,14 @@ class TaskRepository private constructor(private val database: AppDatabase) {
     companion object {
         @Volatile
         private var INSTANCE: TaskRepository? = null
+
+        private val retrofit = Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+
+        private val serviceLogin = retrofit.create(ServiceLogin::class.java)
 
         fun getInstance(database: AppDatabase): TaskRepository {
             return INSTANCE ?: synchronized(this) {
@@ -24,6 +37,10 @@ class TaskRepository private constructor(private val database: AppDatabase) {
 
     init {
         mTasks.addSource(database.taskDAO().getAll()) { taskEntities -> postTasks(taskEntities) }
+    }
+
+    private fun login(email: String, password: String) {
+        serviceLogin.login()
     }
 
     private fun postTasks(taskEntities: List<Task>) {

@@ -9,5 +9,5 @@ import retrofit2.http.POST
 interface ServiceLogin {
 
     @POST("url")
-    fun login(@Header("Authorization") auth: String): Observable<JsonElement>
+    fun login(@Header("Authorization") auth: String, @Field("email") email: String, @Field("password") password: String): Observable<JsonElement>
 }
