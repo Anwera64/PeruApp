@@ -14,8 +14,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun taskDAO(): TaskDAO
     val mIsDatabaseCreated: MutableLiveData<Boolean> = MutableLiveData()
-
-
+    
     companion object {
 
         const val DATABASE_NAME = "App_database"

@@ -16,6 +16,8 @@
     <string name="_ok">OK</string>
     <string name="search_tasks">Buscar tareas</string>
     <string name="delete">delete</string>
+    <string name="error_empty">Tienes que llenar este cuadro</string>
+    <string name="error_email">Tienes que ingresar un correo</string>
 
     <string-array name="date_array">
         <item>La misma fecha</item>

@@ -4,11 +4,12 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.anwera64.peruapp.R
 import com.anwera64.peruapp.data.model.Task
 import kotlinx.android.synthetic.main.item_task.view.*
 
-class AdapterMain(private val view: Delegate) : androidx.recyclerview.widget.RecyclerView.Adapter<AdapterMain.ViewHolder>() {
+class AdapterMain(private val view: Delegate) : RecyclerView.Adapter<AdapterMain.ViewHolder>() {
 
     var tasks: List<Task> = emptyList()
         set(value) {
@@ -18,7 +19,7 @@ class AdapterMain(private val view: Delegate) : androidx.recyclerview.widget.Rec
     var selectedTasks: HashMap<String, Task> = HashMap()
     var isSelecting: Boolean = false
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): AdapterMain.ViewHolder {
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_task, p0, false))
     }
 
@@ -58,7 +59,7 @@ class AdapterMain(private val view: Delegate) : androidx.recyclerview.widget.Rec
         view.onItemSelected()
     }
 
-    inner class ViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var isSelected = false
             set(value) {
                 field = value

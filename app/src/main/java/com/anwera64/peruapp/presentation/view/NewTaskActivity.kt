@@ -64,24 +64,24 @@ class NewTaskActivity : AppCompatActivity() {
     }
 
     private fun checkForCompletion() {
-        if (tilTitle.checkEditText(getString(R.string.obligatory_error))) return
-        if (tilDetail.checkEditText(getString(R.string.obligatory_error))) return
-        if (dueDate == null) {
-            dateAlert()
-            return
-        }
+        if (!tilTitle.checkEditText(getString(R.string.obligatory_error))) return
+        if (!tilDetail.checkEditText(getString(R.string.obligatory_error))) return
+//        if (dueDate == null) {
+//            dateAlert()
+//            return
+//        }
 
         val title = tilTitle.editText?.text.toString()
         val detail = tilDetail.editText?.text.toString()
         val creationDate = Calendar.getInstance().time
         val notificationDate: Date? = null
 
-        if (swRecordatorio.isChecked) {
-
-        }
+//        if (swRecordatorio.isChecked) {
+//
+//        }
 
         val task =
-            Task(UUID.randomUUID().toString(), title, detail, creationDate.time, dueDate!!.time, notificationDate?.time)
+            Task(UUID.randomUUID().toString(), title, detail, creationDate.time, Date().time, notificationDate?.time)
         onTaskCreated(task)
     }
 
@@ -89,6 +89,7 @@ class NewTaskActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.date_error_msg))
             .setNeutralButton(getString(R.string._ok)) { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 
 
