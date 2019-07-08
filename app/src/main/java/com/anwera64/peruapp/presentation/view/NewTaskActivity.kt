@@ -64,8 +64,8 @@ class NewTaskActivity : AppCompatActivity() {
     }
 
     private fun checkForCompletion() {
-        if (tilTitle.checkEditText(getString(R.string.obligatory_error))) return
-        if (tilDetail.checkEditText(getString(R.string.obligatory_error))) return
+        if (!tilTitle.checkEditText(getString(R.string.obligatory_error))) return
+        if (!tilDetail.checkEditText(getString(R.string.obligatory_error))) return
         if (dueDate == null) {
             dateAlert()
             return
