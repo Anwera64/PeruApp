@@ -9,32 +9,23 @@ import com.anwera64.peruapp.R
 import com.anwera64.peruapp.data.model.Task
 import kotlinx.android.synthetic.main.item_task.view.*
 
-class AdapterMain(private val view: Delegate) : RecyclerView.Adapter<AdapterMain.ViewHolder>() {
+class AdapterMain(private val view: Delegate, delegate: PageableAdapter.Delegate) : PageableAdapter<Task, AdapterMain.ViewHolder>(delegate) {
 
-    var tasks: List<Task> = emptyList()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
     var selectedTasks: HashMap<String, Task> = HashMap()
-    var isSelecting: Boolean = false
+    private var isSelecting: Boolean = false
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(p0.context).inflate(R.layout.item_task, p0, false))
     }
 
-    override fun getItemCount(): Int {
-        return tasks.size
-    }
-
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        val task = tasks[p1]
+        val task = itemList[p1]
         val view = p0.itemView
 
         p0.isSelected = task.isSelected
         view.tvTitle.text = task.title
         view.tvDescription.text = task.detail
-        view.tvDate.text = DateFormat.format("dd/MM/yy", task.expirationDate)
+        view.tvDate.text = DateFormat.format("dd/MM/yy", task.creationDate)
 
         view.setOnLongClickListener {
             selectTask(p0, task)

@@ -16,12 +16,13 @@ import com.anwera64.peruapp.R
 import com.anwera64.peruapp.data.local.Preferences
 import com.anwera64.peruapp.data.model.Task
 import com.anwera64.peruapp.presentation.adapter.AdapterMain
+import com.anwera64.peruapp.presentation.adapter.PageableAdapter
 import com.anwera64.peruapp.presentation.viewmodel.MainViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.Normalizer
 
-class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
+class MainActivity : AppCompatActivity(), AdapterMain.Delegate, PageableAdapter.Delegate {
 
     companion object {
         private const val NEW_TASK = 0
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
 
     private enum class MenuType { Normal, OneSelected }
 
-    private val adapter = AdapterMain(this)
+    private val adapter = AdapterMain(this, this)
     private lateinit var viewModel: MainViewModel
     private var menuType = MenuType.Normal
     private lateinit var prefs: Preferences
@@ -40,8 +41,11 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
         prefs = Preferences.getInstance(this, Gson())
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        viewModel.allTasks.observe(this, Observer { tasks ->
-            tasks?.let { adapter.tasks = tasks }
+        viewModel.taskPageable.observe(this, Observer { taskPageable ->
+            taskPageable?.run {
+                val items = content.takeLast(20 - content.size%20)
+                adapter.update(page, items, isLast)
+            }
         })
 
         rvMain.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
@@ -58,6 +62,10 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
                 viewModel.insertTask(task, prefs.getToken().accessToken)
             }
         }
+    }
+
+    override fun requestNewPage(page: Int) {
+        viewModel.getTasks(prefs.getToken().accessToken, page)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -141,14 +149,13 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
     }
 
     private fun filterTasks(query: String = "") {
-        val filteredTasks = viewModel.allTasks.value
-        val queryNormalized = Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD)
-
-        filteredTasks?.let {
-            adapter.tasks = filteredTasks.filter { task ->
+        viewModel.taskPageable.value?.run {
+            val queryNormalized = Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD)
+            val filteredTasks = content.filter { task ->
                 val titleNormalized = Normalizer.normalize(task.title.toLowerCase(), Normalizer.Form.NFD)
                 titleNormalized.contains(queryNormalized)
             }
+            adapter.update(0, filteredTasks, true)
         }
     }
 

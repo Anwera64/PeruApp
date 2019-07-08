@@ -5,38 +5,38 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.anwera64.peruapp.data.Repository
-import com.anwera64.peruapp.data.local.AppDatabase
+import com.anwera64.peruapp.data.model.Pageable
 import com.anwera64.peruapp.data.model.Task
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: Repository
-    val allTasks: MutableLiveData<ArrayList<Task>>
-    private val cd: CompositeDisposable
 
-    init {
-        val db = AppDatabase.getInstance(application)
-        repository = Repository.getInstance(db)
-        allTasks = MutableLiveData()
-        cd = CompositeDisposable()
-    }
+    private val repository: Repository = Repository.getInstance()
+    val taskPageable: MutableLiveData<Pageable<Task>> = MutableLiveData()
+    private val cd: CompositeDisposable = CompositeDisposable()
 
     override fun onCleared() {
         super.onCleared()
         cd.clear()
     }
 
-    fun getTasks(token: String) {
-        cd.add(repository.tasks(token)
+    fun getTasks(token: String, page: Int = 0) {
+        cd.add(repository.tasks(token, page)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
                 if (response.isSuccessful) {
-                    val list = ArrayList<Task>()
-                    list.addAll(response.body()!!)
-                    allTasks.postValue(list)
+                    if (taskPageable.value == null)
+                        taskPageable.postValue(response.body())
+                    else {
+                        response.body()?.run {
+                            taskPageable.value!!.content.addAll(content)
+                            taskPageable.value!!.isLast = isLast
+                            taskPageable.value!!.page = page
+                        }
+                    }
                 } else {
                     Log.e(this.javaClass.simpleName, response.errorBody()?.string())
                 }
@@ -50,7 +50,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
                 if (response.isSuccessful) {
-                    allTasks.value?.add(response.body()!!)
+                    taskPageable.value?.content?.add(0, response.body()!!)
+                    taskPageable.postValue(taskPageable.value)
                 } else {
                     Log.e(this.javaClass.simpleName, response.errorBody()?.string())
                 }
@@ -64,7 +65,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
                 if (response.isSuccessful) {
-                    allTasks.value?.remove(task)
+                    taskPageable.value?.content?.remove(task)
+                    taskPageable.postValue(taskPageable.value)
                 } else {
                     Log.e(this.javaClass.simpleName, response.errorBody()?.string())
                 }

@@ -80,8 +80,7 @@ class NewTaskActivity : AppCompatActivity() {
 //
 //        }
 
-        val task =
-            Task(UUID.randomUUID().toString(), title, detail, creationDate.time, Date().time, notificationDate?.time)
+        val task = Task(UUID.randomUUID().toString(), title, detail, creationDate, Date(), notificationDate)
         onTaskCreated(task)
     }
 
