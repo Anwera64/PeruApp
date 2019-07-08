@@ -1,5 +1,6 @@
 package com.anwera64.peruapp.data
 
+import android.os.Build
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.MediatorLiveData
 import com.anwera64.peruapp.BuildConfig
@@ -7,10 +8,11 @@ import com.anwera64.peruapp.data.local.AppDatabase
 import com.anwera64.peruapp.data.model.Task
 import com.anwera64.peruapp.data.model.Token
 import com.anwera64.peruapp.data.remote.ServiceLogin
-import com.google.gson.JsonElement
+import com.anwera64.peruapp.data.remote.ServiceTask
 import io.reactivex.Observable
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
+import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -25,7 +27,7 @@ class Repository private constructor(private val database: AppDatabase) {
         private var INSTANCE: Repository? = null
 
         private val certPinning = CertificatePinner.Builder()
-            .add("notbank.com", "sha256/vn25ZeRRoCa7WBlcPDaJfYhMYgDHxjrXmHBK1VJiHps=")
+            .add("notbank.com", BuildConfig.SSL)
             .build()
 
         private val httpClient = OkHttpClient.Builder()
@@ -40,6 +42,7 @@ class Repository private constructor(private val database: AppDatabase) {
             .build()
 
         private val serviceLogin = retrofit.create(ServiceLogin::class.java)
+        private val serviceTask = retrofit.create(ServiceTask::class.java)
 
         fun getInstance(database: AppDatabase): Repository {
             return INSTANCE ?: synchronized(this) {
@@ -56,6 +59,21 @@ class Repository private constructor(private val database: AppDatabase) {
 
     fun login(email: String, password: String): Observable<Response<Token>> {
         return serviceLogin.login(BuildConfig.Auth, email, password, "password")
+    }
+
+    fun tasks(token: String): Observable<Response<List<Task>>> {
+        return serviceTask.getTasks("Bearer $token")
+    }
+
+    fun deleteTask(id: String, token: String): Observable<Response<Void>> {
+        return serviceTask.deleteTask("Bearer $token", id)
+    }
+
+    fun createTask(title: String, description: String, token: String): Observable<Response<Task>> {
+        val body = JSONObject()
+        body.put("title", title)
+        body.put("description", description)
+        return serviceTask.createTask("Bearer $token", body)
     }
 
     private fun postTasks(taskEntities: List<Task>) {

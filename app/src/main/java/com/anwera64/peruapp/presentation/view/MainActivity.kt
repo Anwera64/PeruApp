@@ -13,9 +13,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anwera64.peruapp.R
+import com.anwera64.peruapp.data.local.Preferences
 import com.anwera64.peruapp.data.model.Task
 import com.anwera64.peruapp.presentation.adapter.AdapterMain
 import com.anwera64.peruapp.presentation.viewmodel.MainViewModel
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.Normalizer
 
@@ -30,10 +32,12 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
     private val adapter = AdapterMain(this)
     private lateinit var viewModel: MainViewModel
     private var menuType = MenuType.Normal
+    private lateinit var prefs: Preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        prefs = Preferences.getInstance(this, Gson())
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.allTasks.observe(this, Observer { tasks ->
@@ -42,6 +46,8 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
 
         rvMain.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         rvMain.adapter = adapter
+
+        viewModel.getTasks(prefs.getToken().accessToken)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -49,7 +55,7 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
         if (requestCode == NEW_TASK && resultCode == Activity.RESULT_OK) {
             data?.let {
                 val task = data.getSerializableExtra("task") as Task
-                viewModel.insertTask(task)
+                viewModel.insertTask(task, prefs.getToken().accessToken)
             }
         }
     }
@@ -123,7 +129,7 @@ class MainActivity : AppCompatActivity(), AdapterMain.Delegate {
     }
 
     private fun deleteTasks() {
-        adapter.selectedTasks.values.forEach { v -> viewModel.deleteTask(v) }
+        adapter.selectedTasks.values.forEach { v -> viewModel.deleteTask(v, prefs.getToken().accessToken) }
         adapter.selectedTasks.clear()
         menuType = MenuType.Normal
         invalidateOptionsMenu()

@@ -22,6 +22,7 @@ android {
         debug {
             buildConfigField "String", "BASE_URL", "${base_url}"
             buildConfigField "String", "Auth", "${auth}"
+            buildConfigField "String", "SSL", "${certificate}"
         }
     }
 }
