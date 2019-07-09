@@ -16,8 +16,14 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            useProguard true
+            shrinkResources true
+
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "${base_url}"
+            buildConfigField "String", "Auth", "${auth}"
+            buildConfigField "String", "SSL", "${certificate}"
         }
         debug {
             buildConfigField "String", "BASE_URL", "${base_url}"

@@ -22,7 +22,7 @@ class Repository private constructor() {
         private var INSTANCE: Repository? = null
 
         private val certPinning = CertificatePinner.Builder()
-            .add("notbank.com", BuildConfig.SSL)
+            .add("api.notbank.pe", BuildConfig.SSL)
             .build()
 
         private val httpClient = OkHttpClient.Builder()
